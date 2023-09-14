@@ -26,6 +26,17 @@ public class Interpreter {
                 break;
             case "Int":
                 return node.get("value");
+            
+            case "If":
+                var test = eval(node.get("condition"));
+                
+                if(test.toString().equals("true")) {
+                    var t = eval(node.get("then"));
+                    return t;
+                }
+                return eval(node.get("otherwise"));
+            case "Bool":
+                return node.get("value");
         }
 
         return null;
