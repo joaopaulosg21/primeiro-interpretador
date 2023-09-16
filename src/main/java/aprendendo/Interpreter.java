@@ -16,8 +16,8 @@ public class Interpreter {
             case "Str":
                 return node.get("value").toString().replaceAll("\"","");
             case "Binary":
-                var lhs = eval(node.get("lhs"));
-                var rhs = eval(node.get("rhs"));
+                var lhs = eval(node.get("lhs")); 
+                var rhs = eval(node.get("rhs")); 
                 
                 switch(node.get("op").asText()) {
                     case "Add":
@@ -25,6 +25,24 @@ public class Interpreter {
                             return Integer.parseInt(lhs.toString()) + Integer.parseInt(rhs.toString());
                         }catch(Exception e) {
                             return lhs.toString() + rhs.toString();
+                        }
+                    case "Sub":
+                        try {
+                            return Integer.parseInt(lhs.toString()) - Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "Eq":
+                        try {
+                            return Integer.parseInt(lhs.toString()) == Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            return lhs.toString().equals(rhs.toString());
+                        }
+                    case "Lt":
+                        try {
+                            return Integer.parseInt(lhs.toString()) < Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
                         }
                 }
                 break;
@@ -36,8 +54,9 @@ public class Interpreter {
                 
                 if(test.toString().equals("true")) {
                     return eval(node.get("then"));
+                }else{
+                    return eval(node.get("otherwise"));
                 }
-                return eval(node.get("otherwise"));
 
             case "Bool":
                 return node.get("value");
@@ -50,12 +69,14 @@ public class Interpreter {
 
             case "Var":
                 return variaveis.get(node.get("text").asText());
+            
             case "Function":
                 node.get("parameters").forEach(((item) -> {
                     params.put(item.get("text").asText(),null);
                 }));
                 jsonNode = node.get("value");
                 return params;
+                
             case "Call":
                 Map<String,Object> param =(Map<String,Object>) eval(node.get("callee"));
                 
