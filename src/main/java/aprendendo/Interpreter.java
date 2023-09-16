@@ -6,18 +6,18 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 @SuppressWarnings("unchecked")
 public class Interpreter {
-    private static final Map<String,Object> variaveis = new HashMap<>();
+    //private static final Map<String,Object> variaveis = new HashMap<>();
     private static final Map<String,Object> params = new HashMap<>();
     private static JsonNode jsonNode = null;
-    public static Object eval(JsonNode node){
+    public static Object eval(JsonNode node,Map<String,Object> variaveis){
         switch(node.get("kind").asText()) {
             case "Print": 
-                return eval(node.get("value"));
+                return eval(node.get("value"),variaveis);
             case "Str":
                 return node.get("value").toString().replaceAll("\"","");
             case "Binary":
-                var lhs = eval(node.get("lhs")); 
-                var rhs = eval(node.get("rhs")); 
+                var lhs = eval(node.get("lhs"),variaveis); 
+                var rhs = eval(node.get("rhs"),variaveis); 
                 
                 switch(node.get("op").asText()) {
                     case "Add":
@@ -50,12 +50,12 @@ public class Interpreter {
                 return node.get("value");
             
             case "If":
-                var test = eval(node.get("condition"));
+                var test = eval(node.get("condition"),variaveis);
                 
                 if(test.toString().equals("true")) {
-                    return eval(node.get("then"));
+                    return eval(node.get("then"),variaveis);
                 }else{
-                    return eval(node.get("otherwise"));
+                    return eval(node.get("otherwise"),variaveis);
                 }
 
             case "Bool":
@@ -63,9 +63,9 @@ public class Interpreter {
 
             case "Let":
                 var name = node.get("name").get("text").asText();
-                var variavel = eval(node.get("value"));
+                var variavel = eval(node.get("value"),variaveis);
                 variaveis.put(name.toString(),variavel);
-                return eval(node.get("next"));
+                return eval(node.get("next"),variaveis);
 
             case "Var":
                 return variaveis.get(node.get("text").asText());
@@ -78,17 +78,17 @@ public class Interpreter {
                 return params;
                 
             case "Call":
-                Map<String,Object> param =(Map<String,Object>) eval(node.get("callee"));
+                Map<String,Object> param =(Map<String,Object>) eval(node.get("callee"),variaveis);
                 
                 int i = 0;
                 for(var value : param.keySet()) {
-                    param.put(value,eval(node.get("arguments").get(i)));
+                    param.put(value,eval(node.get("arguments").get(i),variaveis));
                     i++;
                 }
                 for(var value : param.keySet()) {
                     variaveis.put(value,param.get(value));
                 }
-                return eval(jsonNode);       
+                return eval(jsonNode,variaveis);       
         }
 
         return null;
