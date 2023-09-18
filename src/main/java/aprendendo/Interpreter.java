@@ -4,11 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
-@SuppressWarnings("unchecked")
 public class Interpreter {
-    //private static final Map<String,Object> variaveis = new HashMap<>();
-    private static final Map<String,Object> params = new HashMap<>();
-    private static JsonNode jsonNode = null;
     public static Object eval(JsonNode node,Map<String,Object> variaveis){
         switch(node.get("kind").asText()) {
             case "Print": 
@@ -19,33 +15,7 @@ public class Interpreter {
                 var lhs = eval(node.get("lhs"),variaveis); 
                 var rhs = eval(node.get("rhs"),variaveis); 
                 
-                switch(node.get("op").asText()) {
-                    case "Add":
-                        try {
-                            return Integer.parseInt(lhs.toString()) + Integer.parseInt(rhs.toString());
-                        }catch(Exception e) {
-                            return lhs.toString() + rhs.toString();
-                        }
-                    case "Sub":
-                        try {
-                            return Integer.parseInt(lhs.toString()) - Integer.parseInt(rhs.toString());
-                        }catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                    case "Eq":
-                        try {
-                            return Integer.parseInt(lhs.toString()) == Integer.parseInt(rhs.toString());
-                        }catch(Exception e) {
-                            return lhs.toString().equals(rhs.toString());
-                        }
-                    case "Lt":
-                        try {
-                            return Integer.parseInt(lhs.toString()) < Integer.parseInt(rhs.toString());
-                        }catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                }
-                break;
+                return binaryOp(lhs,rhs,node.get("op").asText());
             case "Int":
                 return node.get("value");
             
@@ -71,27 +41,59 @@ public class Interpreter {
                 return variaveis.get(node.get("text").asText());
             
             case "Function":
-                node.get("parameters").forEach(((item) -> {
-                    params.put(item.get("text").asText(),null);
-                }));
-                jsonNode = node.get("value");
-                return params;
-                
+                return new Callable() {
+                    public Object call(Object[] arr) {
+                        int i = 0;
+                        Map<String,Object> localEnv = new HashMap<>();
+                        localEnv.putAll(variaveis);
+                        for(var value : arr) {
+                            localEnv.put(node.get("parameters").get(i).get("text").asText(),value);
+                            i++;
+                        }
+                        var result = eval(node.get("value"), localEnv);
+                        return result;
+                    }
+                };
             case "Call":
-                Map<String,Object> param =(Map<String,Object>) eval(node.get("callee"),variaveis);
-                
-                int i = 0;
-                for(var value : param.keySet()) {
-                    param.put(value,eval(node.get("arguments").get(i),variaveis));
-                    i++;
+                int size = node.get("arguments").size();
+                Object[] arr = new Object[size];
+                for(int i=0;i < size;i++) {
+                    arr[i] = eval(node.get("arguments").get(i), variaveis);
                 }
-                for(var value : param.keySet()) {
-                    variaveis.put(value,param.get(value));
-                }
-                return eval(jsonNode,variaveis);       
+                Callable callable = (Callable) eval(node.get("callee"), variaveis);
+                return callable.call(arr);
         }
 
         return null;
     }
 
+    public static Object binaryOp(Object lhs, Object rhs, String op) {
+         switch(op) {
+                    case "Add":
+                        try {
+                            return Integer.parseInt(lhs.toString()) + Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            return lhs.toString() + rhs.toString();
+                        }
+                    case "Sub":
+                        try {
+                            return Integer.parseInt(lhs.toString()) - Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "Eq":
+                        try {
+                            return Integer.parseInt(lhs.toString()) == Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            return lhs.toString().equals(rhs.toString());
+                        }
+                    case "Lt":
+                        try {
+                            return Integer.parseInt(lhs.toString()) < Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                }
+        return null;
+    }
 }
