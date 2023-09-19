@@ -81,15 +81,69 @@ public class Interpreter {
                         }catch(Exception e) {
                             e.printStackTrace();
                         }
+                    case "Mul":
+                        try {
+                            return Integer.parseInt(lhs.toString()) * Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "Div":
+                        try {
+                            return Integer.parseInt(lhs.toString()) / Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "Rem":
+                        try {
+                            return Integer.parseInt(lhs.toString()) % Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }     
                     case "Eq":
                         try {
                             return Integer.parseInt(lhs.toString()) == Integer.parseInt(rhs.toString());
                         }catch(Exception e) {
                             return lhs.toString().equals(rhs.toString());
                         }
+                    case "Neq":
+                        try {
+                            return Integer.parseInt(lhs.toString()) != Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            return lhs.toString() != rhs.toString();
+                        }
                     case "Lt":
                         try {
                             return Integer.parseInt(lhs.toString()) < Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "Gt":
+                        try {
+                            return Integer.parseInt(lhs.toString()) > Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "Lte":
+                        try {
+                            return Integer.parseInt(lhs.toString()) <= Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "Gte":
+                        try {
+                            return Integer.parseInt(lhs.toString()) >= Integer.parseInt(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "And":
+                        try {
+                            return Boolean.parseBoolean(lhs.toString()) && Boolean.parseBoolean(rhs.toString());
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    case "Or":
+                        try {
+                            return Boolean.parseBoolean(lhs.toString()) || Boolean.parseBoolean(rhs.toString());
                         }catch(Exception e) {
                             e.printStackTrace();
                         }
