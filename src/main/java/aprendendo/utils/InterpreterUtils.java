@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import aprendendo.Interpreter;
 
 public class InterpreterUtils {
-    private static long[] cache = new long[50];
 
     public static Object binaryOp(Object lhs, Object rhs, String op) {
         switch (op) {
@@ -96,6 +95,7 @@ public class InterpreterUtils {
     }
 
     public static Function<Object[], Object> funcResolver(Object[] args, Map<String, Object> variables, JsonNode node) {
+        long[] cache = new long[50];
         return new Function<Object[], Object>() {
             @Override
             public Object apply(Object[] arr) {
