@@ -9,11 +9,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import aprendendo.Interpreter;
 
 public class InterpreterUtils {
+    private static long[] cache = new long[50];
+
     public static Object binaryOp(Object lhs, Object rhs, String op) {
         switch (op) {
             case "Add":
                 try {
-                    return Integer.parseInt(lhs.toString()) + Integer.parseInt(rhs.toString());
+                    return Long.parseLong(lhs.toString()) + Long.parseLong(rhs.toString());
                 } catch (Exception e) {
                     return lhs.toString() + rhs.toString();
                 }
@@ -104,7 +106,23 @@ public class InterpreterUtils {
                     localEnv.put(node.get("parameters").get(i).get("text").asText(), value);
                     i++;
                 }
-                var result = Interpreter.eval(node.get("value"), localEnv);
+                if (localEnv.size() == 2) {
+                    try {
+                        String param = localEnv.keySet().toArray()[1].toString();
+                        int index = Integer.parseInt(localEnv.get(param).toString());
+                        if (cache[index] != 0) {
+                            return cache[index];
+                        }
+                        Object result = Interpreter.eval(node.get("value"), localEnv);
+                        long value = Long.parseLong(result.toString());
+                        cache[index] = value;
+                        return result;
+                    } catch (Exception e) {
+                        Object result = Interpreter.eval(node.get("value"), localEnv);
+                        return result;
+                    }
+                }
+                Object result = Interpreter.eval(node.get("value"), localEnv);
                 return result;
             }
         };
