@@ -3,6 +3,7 @@ package aprendendo.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Path;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,4 +35,8 @@ public class FileUtils {
 
         return null;
     }
+
+    public static boolean isValidFile(Path filePath) {
+        return filePath.toString().contains(".json");
+    } 
 }
