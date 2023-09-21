@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import aprendendo.types.Tuple;
 import aprendendo.utils.InterpreterUtils;
 
 @SuppressWarnings("unchecked")
@@ -57,6 +58,31 @@ public class Interpreter {
                 }
                 Function<Object[], Object> function = (Function<Object[], Object>) eval(node.get("callee"), variables);
                 return function.apply(args);
+            case "Tuple":
+                var first = eval(node.get("first"), variables);
+                var second = eval(node.get("second"), variables);
+
+                Tuple tuple = new Tuple(first, second);
+
+                return tuple;
+            case "First":
+                var firstValue = eval(node.get("value"), variables);
+
+                if (firstValue instanceof Tuple) {
+                    Tuple tupleValue = (Tuple) firstValue;
+                    return tupleValue.getFirst();
+                } else {
+                    throw new RuntimeException("Valor passado para first não é uma tupla");
+                }
+            case "Second":
+                var secondValue = eval(node.get("value"), variables);
+
+                if (secondValue instanceof Tuple) {
+                    Tuple tupleValue = (Tuple) secondValue;
+                    return tupleValue.getSecond();
+                } else {
+                    throw new RuntimeException("Valor passado para second não é uma tupla");
+                }
         }
 
         return null;

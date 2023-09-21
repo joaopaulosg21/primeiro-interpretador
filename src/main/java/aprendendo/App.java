@@ -15,6 +15,7 @@ public class App {
             }
         }else{
             throw new RuntimeException("Args invalidos");
-        }        
+        }
+        
     }
 }
