@@ -36,7 +36,7 @@ public class FileUtils {
         return null;
     }
 
-    public static boolean isValidFile(Path filePath) {
-        return filePath.toString().contains(".json");
+    public static String fileType(Path filePath) {
+        return filePath.toString().contains(".json") ? "json" : "rinha";
     } 
 }

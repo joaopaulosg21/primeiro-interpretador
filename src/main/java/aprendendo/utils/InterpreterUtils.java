@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import aprendendo.Interpreter;
+import aprendendo.interpreter.Interpreter;
 
 public class InterpreterUtils {
 

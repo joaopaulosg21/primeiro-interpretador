@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import aprendendo.interpreter.Interpreter;
 import aprendendo.utils.FileUtils;
 
 public class AppTest {
