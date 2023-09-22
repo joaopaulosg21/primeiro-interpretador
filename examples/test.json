@@ -1,0 +1,33 @@
+{
+    "name": "test.rinha",
+    "expression": {
+        "kind": "Print",
+        "value": {
+            "kind": "First",
+            "value": {
+                "kind": "Int",
+                "value": 1,
+                "location": {
+                    "start": 12,
+                    "end": 13,
+                    "filename": "test.rinha"
+                }
+            },
+            "location": {
+                "start": 6,
+                "end": 14,
+                "filename": "test.rinha"
+            }
+        },
+        "location": {
+            "start": 0,
+            "end": 15,
+            "filename": "test.rinha"
+        }
+    },
+    "location": {
+        "start": 0,
+        "end": 15,
+        "filename": "test.rinha"
+    }
+}

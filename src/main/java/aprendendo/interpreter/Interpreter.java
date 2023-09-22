@@ -5,11 +5,14 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import aprendendo.exceptions.ParamsException;
+import aprendendo.exceptions.TupleException;
 import aprendendo.types.Tuple;
 import aprendendo.utils.InterpreterUtils;
 
 @SuppressWarnings("unchecked")
 public class Interpreter {
+    private static int paramSize = 0;
     public static Object eval(JsonNode node, Map<String, Object> variables) {
         Object[] args = null;
         switch (node.get("kind").asText()) {
@@ -48,10 +51,13 @@ public class Interpreter {
                 return variables.get(node.get("text").asText());
 
             case "Function":
+                paramSize = node.get("parameters").size();
                 return InterpreterUtils.funcResolver(args, variables, node);
 
             case "Call":
                 int size = node.get("arguments").size();
+
+                if(size != paramSize) throw new ParamsException();
                 args = new Object[size];
                 for (int i = 0; i < size; i++) {
                     args[i] = eval(node.get("arguments").get(i), variables);
@@ -72,7 +78,7 @@ public class Interpreter {
                     Tuple tupleValue = (Tuple) firstValue;
                     return tupleValue.getFirst();
                 } else {
-                    throw new RuntimeException("Valor passado para first não é uma tupla");
+                    throw new TupleException();
                 }
             case "Second":
                 var secondValue = eval(node.get("value"), variables);
@@ -81,7 +87,7 @@ public class Interpreter {
                     Tuple tupleValue = (Tuple) secondValue;
                     return tupleValue.getSecond();
                 } else {
-                    throw new RuntimeException("Valor passado para second não é uma tupla");
+                    throw new TupleException();
                 }
         }
 
