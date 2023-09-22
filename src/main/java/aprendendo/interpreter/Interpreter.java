@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import aprendendo.exceptions.ConditionalException;
 import aprendendo.exceptions.ParamsException;
 import aprendendo.exceptions.TupleException;
 import aprendendo.types.Tuple;
@@ -31,6 +32,8 @@ public class Interpreter {
 
             case "If":
                 var test = eval(node.get("condition"), variables);
+
+                if(!(test instanceof Boolean)) throw new ConditionalException();
 
                 if (test.toString().equals("true")) {
                     return eval(node.get("then"), variables);
