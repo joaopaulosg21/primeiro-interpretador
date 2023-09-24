@@ -96,14 +96,13 @@ public class InterpreterUtils {
 
     public static Function<Object[], Object> funcResolver(Object[] args, Map<String, Object> variables, JsonNode node) {
         long[] cache = new long[50];
-        return new Function<Object[], Object>() {
-            @Override
-            public Object apply(Object[] arr) {
+        return (Object[] arr) -> {
                 int i = 0;
                 Map<String, Object> localEnv = new HashMap<>();
                 localEnv.putAll(variables);
                 for (var value : arr) {
-                    localEnv.put(node.get("parameters").get(i).get("text").asText(), value);
+                    String param = node.get("parameters").get(i).get("text").asText();
+                    localEnv.put(param, value);
                     i++;
                 }
                 if (localEnv.size() == 2) {
@@ -124,7 +123,6 @@ public class InterpreterUtils {
                 }
                 Object result = Interpreter.eval(node.get("value"), localEnv);
                 return result;
-            }
         };
     }
 
