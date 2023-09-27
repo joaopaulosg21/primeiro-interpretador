@@ -96,7 +96,9 @@ public class InterpreterUtils {
 
     public static Function<Object[], Object> funcResolver(Object[] args, Map<String, Object> variables, JsonNode node) {
         long[] cache = new long[50];
-        return (Object[] arr) -> {
+        return new Function<Object[], Object>() {
+            @Override
+            public Object apply(Object[] arr) {
                 int i = 0;
                 Map<String, Object> localEnv = new HashMap<>();
                 localEnv.putAll(variables);
@@ -105,24 +107,27 @@ public class InterpreterUtils {
                     localEnv.put(param, value);
                     i++;
                 }
-                if (localEnv.size() == 2) {
-                    try {
-                        String param = localEnv.keySet().toArray()[1].toString();
-                        int index = Integer.parseInt(localEnv.get(param).toString());
-                        if (cache[index] != 0) {
-                            return cache[index];
-                        }
-                        Object result = Interpreter.eval(node.get("value"), localEnv);
-                        long value = Long.parseLong(result.toString());
-                        cache[index] = value;
-                        return result;
-                    } catch (Exception e) {
-                        Object result = Interpreter.eval(node.get("value"), localEnv);
-                        return result;
+                try {
+                    String param = localEnv.keySet().toArray()[1].toString();
+                    int index = Integer.parseInt(localEnv.get(param).toString());
+                    if (cache[index] != 0) {
+                        return cache[index];
                     }
+                    Object result = Interpreter.eval(node.get("value"), localEnv);
+                    long value = Long.parseLong(result.toString());
+                    cache[index] = value;
+                    return result;
+                } catch (Exception e) {
+                    Object result = Interpreter.eval(node.get("value"), localEnv);
+                    return result;
                 }
-                Object result = Interpreter.eval(node.get("value"), localEnv);
-                return result;
+
+            };
+
+            @Override
+            public String toString() {
+                return "<#closure>";
+            }
         };
     }
 
